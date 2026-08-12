@@ -4,7 +4,10 @@ import cors from "cors"
 
 const app: Application = express();
 
-app.use(cors());
+app.use(cors({
+  origin: ["https://gouravme.netlify.app", "http://localhost:3000", "http://localhost:5173"],
+  credentials: true,
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
