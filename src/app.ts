@@ -15,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: "Personal RAG Server is running Rag Working fine ",
+    message: "Personal RAG Server is running Rag Working fine",
   });
 });
 
