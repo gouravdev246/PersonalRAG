@@ -3,9 +3,9 @@ import path from "node:path";
 import fs from "node:fs";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { VoyageEmbeddings } from "@langchain/community/embeddings/voyage";
 import { PineconeStore } from "@langchain/pinecone";
 import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
+import { CohereEmbeddings } from "@langchain/cohere";
 async function pdfloader(filepath) {
     const loader = new PDFLoader(filepath, {
         // Optional configuration:
@@ -14,7 +14,7 @@ async function pdfloader(filepath) {
     // 2. Load and parse the PDF content
     const docs = await loader.load();
     const fulltext = docs.map((doc) => doc.pageContent).join(" ");
-    const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 300, chunkOverlap: 100 });
+    const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 800, chunkOverlap: 200 });
     const texts = await splitter.splitText(fulltext);
     const finalText = texts.map((text, index) => {
         return {
@@ -27,12 +27,12 @@ async function pdfloader(filepath) {
     });
     return finalText;
 }
-export const embeddings = new VoyageEmbeddings({
-    modelName: "voyage-3-lite",
-    apiKey: process.env.VOYAGE_API_KEY || "pa-PJftugFAiUOLed-Wr-3LNVsulb3htquBX7D54JkLqMC",
+export const embeddings = new CohereEmbeddings({
+    model: "embed-english-v3.0", // Natively outputs 1024 dimensions!
+    apiKey: process.env.COHERE_API_KEY || "",
 });
 const pinecone = new PineconeClient({
-    apiKey: process.env.PINECONE_API_KEY || "pcsk_3xpUxr_K8pn15MLkxu7tAc2frgN8ti2uQXc9kUMKVahXN3ZmsF5gE87qCWzh5omP2kS8v3"
+    apiKey: process.env.PINECONE_API_KEY || "",
 });
 const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX || "personalrag");
 export const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
@@ -48,10 +48,10 @@ export async function generateEmbeddingStoreDB() {
     await vectorStore.addDocuments(Document);
     console.log("All Done ... ");
 }
-export async function searchSimilarity(query, k = 2) {
-    const similaritySearchResults = await vectorStore.similaritySearch(query, k);
-    for (const doc of similaritySearchResults) {
-        console.log(`* ${doc.pageContent} [${JSON.stringify(doc.metadata)}]`);
-    }
+export async function searchSimilarity(query, k = 5) {
+    const filter = { source: "Gourav_Personal_RAG_Knowledge_Base.pdf" };
+    const similaritySearchResults = await vectorStore.similaritySearch(query, k, filter);
     return similaritySearchResults;
 }
+// Call generateEmbeddingStoreDB() manually when indexing new documents
+generateEmbeddingStoreDB();
