@@ -5,8 +5,9 @@ import cors from "cors"
 const app: Application = express();
 
 app.use(cors({
-  origin: ["https://gouravme.netlify.app", "http://localhost:3000", "http://localhost:5173"],
-  credentials: true,
+  origin: "*",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -14,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
-    message: "Personal RAG Server is running",
+    message: "Personal RAG Server is running Rag Working fine ",
   });
 });
 
