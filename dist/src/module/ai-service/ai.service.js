@@ -29,10 +29,10 @@ async function pdfloader(filepath) {
 }
 export const embeddings = new CohereEmbeddings({
     model: "embed-english-v3.0", // Natively outputs 1024 dimensions!
-    apiKey: process.env.COHERE_API_KEY || "cohere_80MPM7UISi61ZpjQ0f3lddU8myQ72Y2UlYcooRPy35bLW1",
+    apiKey: process.env.COHERE_API_KEY || "",
 });
 const pinecone = new PineconeClient({
-    apiKey: process.env.PINECONE_API_KEY || "pcsk_3xpUxr_K8pn15MLkxu7tAc2frgN8ti2uQXc9kUMKVahXN3ZmsF5gE87qCWzh5omP2kS8v3",
+    apiKey: process.env.PINECONE_API_KEY || "",
 });
 const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX || "personalrag");
 export const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
@@ -49,7 +49,9 @@ export async function generateEmbeddingStoreDB() {
     console.log("All Done ... ");
 }
 export async function searchSimilarity(query, k = 5) {
-    const similaritySearchResults = await vectorStore.similaritySearch(query, k);
+    const filter = { source: "Gourav_Personal_RAG_Knowledge_Base.pdf" };
+    const similaritySearchResults = await vectorStore.similaritySearch(query, k, filter);
     return similaritySearchResults;
 }
 // Call generateEmbeddingStoreDB() manually when indexing new documents
+generateEmbeddingStoreDB();

@@ -38,13 +38,14 @@ async function pdfloader(filepath: string) {
 
 export const embeddings = new CohereEmbeddings({
   model: "embed-english-v3.0", // Natively outputs 1024 dimensions!
-  apiKey: process.env.COHERE_API_KEY,
+  apiKey: process.env.COHERE_API_KEY || "",
 });
 
 const pinecone = new PineconeClient({
-    apiKey: process.env.PINECONE_API_KEY,
+    apiKey: process.env.PINECONE_API_KEY || "",
 });
-const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX!);
+const pineconeIndex = pinecone.Index(process.env.PINECONE_INDEX || "personalrag");
+
 
 
 export const vectorStore = await PineconeStore.fromExistingIndex(

@@ -10,7 +10,7 @@ export async function chatwithAI(req, res) {
         const formattedContext = searchResults.length > 0
             ? searchResults.map((doc, idx) => `[Source Chunk ${idx + 1}]:\n${doc.pageContent}`).join("\n\n---\n\n")
             : "No specific background document chunks were retrieved for this query.";
-        const llmAns = await fetch("https://run.blaxel.ai/gourav246/models/sandbox-openai/v1/chat/completions", {
+        const llmAns = await fetch(process.env.BL_API_ENDPOINT, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${process.env.BL_API_KEY}`,
