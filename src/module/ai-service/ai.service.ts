@@ -76,7 +76,8 @@ export async function searchSimilarity(query: string, k: number = 5) {
 
 // Call generateEmbeddingStoreDB() manually when indexing new documents
 
-generateEmbeddingStoreDB() 
+// generateEmbeddingStoreDB();
+
 
 
 
