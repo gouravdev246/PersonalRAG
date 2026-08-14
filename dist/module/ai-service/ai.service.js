@@ -53,5 +53,3 @@ export async function searchSimilarity(query, k = 5) {
     const similaritySearchResults = await vectorStore.similaritySearch(query, k, filter);
     return similaritySearchResults;
 }
-// Call generateEmbeddingStoreDB() manually when indexing new documents
-generateEmbeddingStoreDB();
