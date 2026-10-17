@@ -21,13 +21,13 @@ async function pdfloader(filepath: string) {
     const docs = await loader.load();
     const fulltext = docs.map((doc) => doc.pageContent).join(" ")
 
-    const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 800, chunkOverlap: 200 })
+    const splitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200 })
     const texts = await splitter.splitText(fulltext)
     const finalText = texts.map((text, index) => {
         return {
             pageContent: text,
             metadata: {
-                source: "Gourav_Personal_RAG_Knowledge_Base.pdf",
+                source: "Gourav_Sarkar_Enhanced_Personal_RAG_Knowledge_Base_v3.pdf",
                 page: index + 1,
             }
         }
@@ -58,9 +58,9 @@ export const vectorStore = await PineconeStore.fromExistingIndex(
 
 export async function generateEmbeddingStoreDB() {
     console.log("Generate Starting....");
-    const targetPdfPath = fs.existsSync(path.resolve(process.cwd(), "public/Gourav_Personal_RAG_Knowledge_Base.pdf"))
-        ? path.resolve(process.cwd(), "public/Gourav_Personal_RAG_Knowledge_Base.pdf")
-        : path.resolve(import.meta.dirname, "../../../public/Gourav_Personal_RAG_Knowledge_Base.pdf");
+    const targetPdfPath = fs.existsSync(path.resolve(process.cwd(), "public/Gourav_Sarkar_Enhanced_Personal_RAG_Knowledge_Base_v3.pdf"))
+        ? path.resolve(process.cwd(), "public/Gourav_Sarkar_Enhanced_Personal_RAG_Knowledge_Base_v3.pdf")
+        : path.resolve(import.meta.dirname, "../../../public/Gourav_Sarkar_Enhanced_Personal_RAG_Knowledge_Base_v3.pdf");
 
     const Document = await pdfloader(targetPdfPath);
     await vectorStore.addDocuments(Document);
@@ -68,7 +68,7 @@ export async function generateEmbeddingStoreDB() {
 }
 
 export async function searchSimilarity(query: string, k: number = 5) {
-    const filter = { source: "Gourav_Personal_RAG_Knowledge_Base.pdf" };
+    const filter = { source: "Gourav_Sarkar_Enhanced_Personal_RAG_Knowledge_Base_v3.pdf" };
 
     const similaritySearchResults = await vectorStore.similaritySearch(query, k , filter);
     return similaritySearchResults;
